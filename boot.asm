@@ -15,7 +15,7 @@ start:
     ; stage 2 loading from disk
     mov bx, 0x0500 ; next free chunk of memory
     mov ah, 0x02 ; disk services: function to read sector
-    mov al, 5 ; read 5 sectors
+    mov al, 10 ; read n sectors
     
     ; cylinder, sector, head
     mov ch, 0
@@ -45,6 +45,5 @@ boot_drive db 0
 error_msg db "Disk error", 0x0D, 0x0A, 0
 
 ; define bytes, with cr and lf and null terminator
-msg db "Hello long message", 0x0D, 0x0A, 0
 times 510 - ($ - $$) db 0
 dw 0xaa55
