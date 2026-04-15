@@ -1,8 +1,8 @@
 # configuration
 AS = nasm
-CC = i686-linx-gnu-gcc
-LD = i686-linx-gnu-ld
-OBJCOPY = i686-linx-gnu-objcopy
+CC = i686-linux-gnu-gcc
+LD = i686-linux-gnu-ld
+OBJCOPY = i686-linux-gnu-objcopy
 
 # compiler and linker flags
 CFLAGS = -m32 -ffreestanding -fno-pie
@@ -35,8 +35,14 @@ kernel/kernel_entry.o: kernel/kernel_entry.asm
 kernel/kernel.o: kernel/kernel.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/isr.o: kernel/isr.asm
+	$(AS) -f elf $< -o $@
+
+kernel/idt.o: kernel/idt.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf

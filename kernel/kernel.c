@@ -1,3 +1,5 @@
+#include "idt.h"
+
 //vga buffer's location in protected mode
 #define VGA_ADDRESS 0xb8000
 //screen dimensions
@@ -39,5 +41,15 @@ void vga_print(int col, int row, char* str, char colour)
 void kernel_main()
 {
     vga_clear();
-    vga_print(0,0, "we are in the kernel now.", WHITE_ON_BLACK);
+    vga_print(0,0, "Welcome to the kernel. Initialising IDT....", WHITE_ON_BLACK);
+    
+    idt_init();
+
+    //now the hardware can interrupt us
+    __asm__ volatile ("sti");
+
+    
+    vga_print(0,1, "IDT initialised, interrupts enabled.", WHITE_ON_BLACK);
+
+    for (;;);
 }
