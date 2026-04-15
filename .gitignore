@@ -1,2 +1,4 @@
 *.bin
 *.un~
+clip.exe
+*.elf
