@@ -1,5 +1,5 @@
 //vga buffer's location in protected mode
-#define VGA_ADDRESS 0xf8000
+#define VGA_ADDRESS 0xb8000
 //screen dimensions
 #define VGA_COLS 80
 #define VGA_ROWS 25

@@ -21,9 +21,9 @@ start:
     mov al, 20
     mov ch, 0
     mov cl, 7
-    mov dl, 0
     mov dl, [boot_drive]
     int 0x13
+    jc disk_error
 
     ; fall through to gdt setup
     cli
@@ -36,6 +36,19 @@ start:
 
     ; flush the cpu pipeline by far jumping. this ensures that instructions prefetched in real mode are flushed
     jmp CODE_SEG:init_pm
+
+disk_error:
+    mov si, err_msg
+.print:
+    lodsb
+    test al, al
+    jz .hang
+    mov ah, 0x0E
+    int 0x10
+    jmp .print
+.hang:
+    hlt
+    jmp .hang
 
 gdt_start:
 
@@ -73,7 +86,9 @@ gdt_descriptor:
 CODE_SEG equ 0x08
 DATA_SEG equ 0x10
 
+boot_drive db 0
 msg db "stage 2 loading in progress...", 0x0d, 0x0a, 0
+err_msg db "disk error occured.", 0x0d, 0x0a, 0
 
 times 512 - ($ - $$) db 0
 
@@ -89,8 +104,16 @@ init_pm:
     
     ; set up stack
     mov esp, 0x90000
+    
+    ; copying kernel from 0x1000 to 0x100000
+    mov esi, 0x1000
+    mov edi, 0x100000
+    mov ecx, 2560 ; dwords to copy, each is 4 bytes so about 20 sectors
+    rep movsd ; repeat copying dword from esi to edi
+    jmp 0x100000
+    ; the jmp takes us to the kernel code now, so any code below this is redundant.
 
     ; no more bios interrupts in protected mode. to print stuff, we can write to the vga buffer at 0xb8000
     ; dword is the size specifier to tell the cpu to write 4 bytes, whereas dw is a nasm specific instruction
-    mov dword[0xb8000], 0x2f4b2f4f ; ok in vga
-    hlt
+    ; mov dword[0xb8000], 0x2f4b2f4f ; ok in vga
+    ; hlt
