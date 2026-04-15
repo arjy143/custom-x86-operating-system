@@ -51,5 +51,8 @@ void kernel_main()
     
     vga_print(0,1, "IDT initialised, interrupts enabled.", WHITE_ON_BLACK);
 
-    for (;;);
+    for (;;)
+    {
+        __asm__ volatile ("hlt");
+    }
 }

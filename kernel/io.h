@@ -8,7 +8,7 @@ static inline void port_out(unsigned short port, unsigned char value)
 }
 
 //read byte from io port
-static inline void port_in(unsigned short port)
+static inline unsigned char port_in(unsigned short port)
 {
     unsigned char value;
     __asm__ volatile ("inb %1, %0" : "=a"(value): "Nd"(port));
