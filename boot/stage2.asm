@@ -2,6 +2,7 @@
 [org 0x0500]
 
 start:
+    mov [boot_drive], dl
     mov si, msg
 .print:
     lodsb
@@ -11,6 +12,19 @@ start:
     int 0x10
     jmp .print
 .done: 
+
+    ; load kernel before gdt setup
+    mov bx, 0x0000
+    mov es, bx
+    mov bx, 0x1000
+    mov ah, 0x02
+    mov al, 20
+    mov ch, 0
+    mov cl, 7
+    mov dl, 0
+    mov dl, [boot_drive]
+    int 0x13
+
     ; fall through to gdt setup
     cli
     lgdt [gdt_descriptor] ; load gdt
