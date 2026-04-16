@@ -1,5 +1,6 @@
 #include "idt.h"
 #include "io.h"
+#include "keyboard.h"
 
 //the IDT data structure itself, holding 256 entries at 8 bytes each
 struct idt_entry idt[256];
@@ -129,6 +130,11 @@ void isr_handler(unsigned int esp)
 {
     //this should get the interrupt number from the stack
     unsigned char int_num = *((unsigned char*)(esp + 48));
+    
+    if (int_num == 33)
+    {
+        keyboard_handler();
+    }
 
     if (int_num >= 32)
     {

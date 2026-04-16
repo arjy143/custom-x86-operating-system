@@ -1,4 +1,6 @@
 #include "idt.h"
+#include "vga.h"
+#include "keyboard.h"
 
 //vga buffer's location in protected mode
 #define VGA_ADDRESS 0xb8000

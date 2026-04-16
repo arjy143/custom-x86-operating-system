@@ -41,8 +41,11 @@ kernel/isr.o: kernel/isr.asm
 kernel/idt.o: kernel/idt.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/keyboard.o: kernel/keyboard.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf
