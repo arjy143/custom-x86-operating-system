@@ -71,6 +71,35 @@ void keyboard_handler()
     //read scan code
     unsigned char scan_code = port_in(0x60);
     
+    //handle backspaces by writing ' ' and moving the cursor back
+    if (scan_code == 0x0e)
+    {
+        if (cursor_col > 0)
+        {
+            cursor_col--;
+        }
+        else if (cursor_row > 1)
+        {
+            cursor_row--;
+            cursor_col = VGA_COLS - 1;
+        }
+
+        vga_write_char(cursor_col, cursor_row, ' ', WHITE_ON_BLACK);
+        return;
+    }
+
+    //handle enter by moving to the next row, first column
+    if (scan_code == 0x1c)
+    {
+        cursor_col = 0;
+        cursor_row++;
+        if (cursor_row >= VGA_ROWS)
+        {
+            cursor_row = VGA_ROWS - 1;
+        }
+        return;
+    }
+
     //check if shift is held or not
     if (scan_code == 0x2a || scan_code == 0x36)
     {
@@ -126,6 +155,10 @@ void keyboard_handler()
         {
             cursor_col = 0;
             cursor_row++;
+            if (cursor_row >= VGA_ROWS)
+            {
+                cursor_row = VGA_ROWS - 1;
+            }
         }
     }
 }
