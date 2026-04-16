@@ -35,6 +35,32 @@ static char scancode_table[128] =
     0,  0,  0,  0,  0,  0,  0,  0,  0
 };
 
+//table to use when shift pressed
+static char scancode_table_shift[128] = 
+{
+    0,    0,
+    '!',  '@',  '#',  '$',  '%',  '^',  '&',  '*',  '(',  ')',
+    '_',  '+',
+    0,    '\t',
+    'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',  'O',  'P',
+    '{',  '}',
+    0,    0,
+    'A',  'S',  'D',  'F',  'G',  'H',  'J',  'K',  'L',
+    ':',  '"',  '~',
+    0,    '|',
+    'Z',  'X',  'C',  'V',  'B',  'N',  'M',
+    '<',  '>',  '?',
+    0,    0,    0,    ' ',
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0
+};
+
+static int shift_held = 0;
+
 static int cursor_col = 0;
 static int cursor_row = 1;
 
@@ -43,6 +69,19 @@ void keyboard_handler()
 {
     //read scan code
     unsigned char scan_code = port_in(0x60);
+    
+    //check if shift is held or not
+    if (scan_code == 0x2a || scan_code == 0x36)
+    {
+        shift_held = 1;
+        return;
+    }
+
+    if (scan_code == 0xaa || scan_code == 0xb6)
+    {
+        shift_held = 0;
+        return;
+    }
 
     //ignore if released
     if (scan_code & 0x80)
@@ -50,7 +89,7 @@ void keyboard_handler()
         return;
     }
 
-    char c = scancode_table[scan_code];
+    char c = shift_held ? scancode_table_shift[scan_code] : scancode_table[scan_code];
 
     //if the character is printable, print it
     if (c != 0)
