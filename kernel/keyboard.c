@@ -60,6 +60,7 @@ static char scancode_table_shift[128] =
 };
 
 static int shift_held = 0;
+static int caps_lock = 0;
 
 static int cursor_col = 0;
 static int cursor_row = 1;
@@ -82,18 +83,41 @@ void keyboard_handler()
         shift_held = 0;
         return;
     }
+    
+    //check if caps lock is toggled, but ignore its release
+    if (scan_code == 0x3a)
+    {
+        caps_lock = !caps_lock;
+        return;
+    }
 
     //ignore if released
     if (scan_code & 0x80)
     {
         return;
     }
-
-    char c = shift_held ? scancode_table_shift[scan_code] : scancode_table[scan_code];
+    
+    //get base character from normal table, and if caps lock is active or shift is pressed, switch to shift tabled
+    char c = scancode_table[scan_code];
 
     //if the character is printable, print it
     if (c != 0)
     {
+        //if its a letter, caps lock applies, but it doesnt apply for things like symbols or numbers.
+        if (c >= 'a' && c <= 'z')
+        {
+            if (shift_held ^ caps_lock)
+            {
+                //ascii trick to get the capital letter mathematically
+                c = c - 'a' + 'A';
+            }
+        }
+        //if shift held, then use the shift table which applies to all keys, not just letters.
+        else if (shift_held)
+        {
+            c = scancode_table_shift[scan_code];
+        }
+
         vga_write_char(cursor_col, cursor_row, c, WHITE_ON_BLACK);
         cursor_col++;
 
