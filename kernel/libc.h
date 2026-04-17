@@ -14,4 +14,6 @@ void strcpy(char* dest, char* src);
 
 void itoa(int value, char* buf);
 
+void strcat(char* dest, char* src);
+
 #endif

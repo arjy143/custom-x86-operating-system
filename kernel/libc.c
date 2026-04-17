@@ -104,3 +104,14 @@ void itoa(int value, char* buf)
     buf[j] = 0;
 }
 
+void strcat(char* dest, char* src)
+{
+    int i = strlen(dest);
+    int j = 0;
+
+    while (src[j] != 0)
+    {
+        dest[i++] = src[j++];
+    }
+    dest[i] = 0;
+}
