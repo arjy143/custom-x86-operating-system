@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "vga.h"
 #include "keyboard.h"
+#include "memory.h"
 
 //vga buffer's location in protected mode
 #define VGA_ADDRESS 0xb8000
@@ -43,8 +44,10 @@ void vga_print(int col, int row, char* str, char colour)
 void kernel_main()
 {
     vga_clear();
-    vga_print(0,0, "Welcome to the kernel. Initialising IDT....", WHITE_ON_BLACK);
+    vga_print(0,0, "Welcome to the kernel. Initialising...", WHITE_ON_BLACK);
     
+    memory_init();
+
     idt_init();
 
     //now the hardware can interrupt us

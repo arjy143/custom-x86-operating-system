@@ -44,8 +44,14 @@ kernel/idt.o: kernel/idt.c
 kernel/keyboard.o: kernel/keyboard.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/memory.o: kernel/memory.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+kernel/libc.o: kernel/libc.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf
