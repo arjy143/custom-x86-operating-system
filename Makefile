@@ -50,8 +50,14 @@ kernel/memory.o: kernel/memory.c
 kernel/libc.o: kernel/libc.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/vga.o: kernel/vga.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+kernel/shell.o: kernel/shell.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf

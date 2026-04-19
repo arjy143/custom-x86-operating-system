@@ -1,6 +1,7 @@
 #include "keyboard.h"
 #include "vga.h"
 #include "io.h"
+#include "shell.h"
 
 //basic scan code lookup table, containing the outputs for each index
 
@@ -59,11 +60,13 @@ static char scancode_table_shift[128] =
     0,  0,  0,  0,  0,  0,  0,  0,  0
 };
 
+//keyboard.c should no longer directly call the write functions, but instead should simply store the characters in a buffer, which the shell can read.
+#define INPUT_BUFFER_SIZE 256
+static char input_buffer[INPUT_BUFFER_SIZE];
+static int input_len = 0;
+
 static int shift_held = 0;
 static int caps_lock = 0;
-
-static int cursor_col = 0;
-static int cursor_row = 1;
 
 //handle irq1
 void keyboard_handler()
@@ -71,35 +74,6 @@ void keyboard_handler()
     //read scan code
     unsigned char scan_code = port_in(0x60);
     
-    //handle backspaces by writing ' ' and moving the cursor back
-    if (scan_code == 0x0e)
-    {
-        if (cursor_col > 0)
-        {
-            cursor_col--;
-        }
-        else if (cursor_row > 1)
-        {
-            cursor_row--;
-            cursor_col = VGA_COLS - 1;
-        }
-
-        vga_write_char(cursor_col, cursor_row, ' ', WHITE_ON_BLACK);
-        return;
-    }
-
-    //handle enter by moving to the next row, first column
-    if (scan_code == 0x1c)
-    {
-        cursor_col = 0;
-        cursor_row++;
-        if (cursor_row >= VGA_ROWS)
-        {
-            cursor_row = VGA_ROWS - 1;
-        }
-        return;
-    }
-
     //check if shift is held or not
     if (scan_code == 0x2a || scan_code == 0x36)
     {
@@ -120,45 +94,59 @@ void keyboard_handler()
         return;
     }
 
+    //handle backspaces
+    if (scan_code == 0x0e)
+    {
+        if (input_len > 0)
+        {
+            input_len--;
+            input_buffer[input_len] = 0;
+            shell_backspace();
+        }
+
+        return;
+    }
+
+    //handle enter by passing buffer to shell
+    if (scan_code == 0x1c)
+    {
+        input_buffer[input_len] = 0;
+        shell_process(input_buffer);
+        input_len = 0;
+        input_buffer[0] = 0;
+        return;
+    }
+
     //ignore if released
     if (scan_code & 0x80)
     {
         return;
     }
     
-    //get base character from normal table, and if caps lock is active or shift is pressed, switch to shift tabled
+    //get base character from normal table, and if caps lock is active or shift is pressed, switch to shift table
     char c = scancode_table[scan_code];
+    
+    if (c == 0)
+    {
+        return;
+    }
 
     //if the character is printable, print it
-    if (c != 0)
+    //if its a letter, caps lock applies, but it doesnt apply for things like symbols or numbers.
+    if (c >= 'a' && c <= 'z')
     {
-        //if its a letter, caps lock applies, but it doesnt apply for things like symbols or numbers.
-        if (c >= 'a' && c <= 'z')
+        if (shift_held ^ caps_lock)
         {
-            if (shift_held ^ caps_lock)
-            {
-                //ascii trick to get the capital letter mathematically
-                c = c - 'a' + 'A';
-            }
-        }
-        //if shift held, then use the shift table which applies to all keys, not just letters.
-        else if (shift_held)
-        {
-            c = scancode_table_shift[scan_code];
-        }
-
-        vga_write_char(cursor_col, cursor_row, c, WHITE_ON_BLACK);
-        cursor_col++;
-
-        //wrap
-        if (cursor_col >= VGA_COLS)
-        {
-            cursor_col = 0;
-            cursor_row++;
-            if (cursor_row >= VGA_ROWS)
-            {
-                cursor_row = VGA_ROWS - 1;
-            }
+            //ascii trick to get the capital letter mathematically
+            c = c - 'a' + 'A';
         }
     }
+    //if shift held, then use the shift table which applies to all keys, not just letters.
+    else if (shift_held)
+    {
+        c = scancode_table_shift[scan_code];
+    }
+    
+    input_buffer[input_len++] = c;
+    shell_putchar(c);
 }
