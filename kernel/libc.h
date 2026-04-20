@@ -8,14 +8,14 @@ void memset(void* ptr, uint8_t value, uint32_t size);
 
 void memcpy(void* dest, void* src, uint32_t size);
 
-int strlen(int8_t* str); 
+int strlen(char* str); 
 
-int strcmp(int8_t* a, int8_t* b);
+int strcmp(char* a, char* b);
 
-void strcpy(int8_t* dest, int8_t* src);
+void strcpy(char* dest, char* src);
 
-void itoa(int32_t value, int8_t* buf);
+void itoa(int32_t value, char* buf);
 
-void strcat(int8_t* dest, int8_t* src);
+void strcat(char* dest, char* src);
 
 #endif

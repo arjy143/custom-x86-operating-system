@@ -85,4 +85,6 @@ void idt_set_entry(int32_t index, uint32_t base, uint16_t selector, uint8_t attr
 
 void idt_init();
 
+void idt_load(struct idt_descriptor* idtr);
+
 #endif

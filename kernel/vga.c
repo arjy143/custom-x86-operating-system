@@ -6,7 +6,7 @@
 uint16_t *vga = (uint16_t*)VGA_ADDRESS;
 
 //write single char to specific position
-void vga_write_char(int32_t col, int32_t row, int8_t c, int8_t colour)
+void vga_write_char(int32_t col, int32_t row, char c, int8_t colour)
 {
     int32_t index = row * VGA_COLS + col;
     vga[index] = (uint16_t)c | ((uint16_t)colour << 8);
@@ -22,7 +22,7 @@ void vga_clear()
 }
 
 //write whole string
-void vga_print(int32_t col, int32_t row, int8_t* str, int8_t colour)
+void vga_print(int32_t col, int32_t row, char* str, int8_t colour)
 {
     int32_t i = 0;
     while (str[i] != 0)

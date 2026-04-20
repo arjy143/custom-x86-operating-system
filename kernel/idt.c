@@ -1,7 +1,7 @@
 #include "idt.h"
 #include "io.h"
 #include "keyboard.h"
-#include "types.h"
+#include "panic.h"
 
 //the IDT data structure itself, holding 256 entries at 8 bytes each
 struct idt_entry idt[256];
@@ -132,6 +132,48 @@ void isr_handler(uint32_t esp)
     //this should get the interrupt number from the stack
     uint8_t int_num = *((uint8_t*)(esp + 48));
     
+    //providing readable panic messages for the intel cpu exceptions
+    if (int_num < 32)
+    {
+        char* exceptions[] = 
+        {
+            "Division by zero",
+            "Debug",
+            "Non maskable interrupt",
+            "Breakpoint",
+            "Overflow",
+            "Bound range exceeded",
+            "Invalid opcode",
+            "Device not available",
+            "Double fault",
+            "Coprocessor segment overrun",
+            "Invalid TSS",
+            "Segment not present",
+            "Stack segment fault",
+            "General protection fault",
+            "Page fault",
+            "Reserved",
+            "x87 floating point",
+            "Alignment check",
+            "Machine check",
+            "SIMD floating point",
+            "Virtualisation",
+            "Reserved",
+            "Reserved",
+            "Reserved",
+            "Reserved",
+            "Reserved",
+            "Reserved",
+            "Reserved",
+            "Reserved", 
+            "Reserved",
+            "Security exception",
+            "Reserved"
+        };
+
+        kernel_panic(exceptions[int_num]);
+    }
+
     if (int_num == 33)
     {
         keyboard_handler();

@@ -3,6 +3,7 @@
 #include "keyboard.h"
 #include "memory.h"
 #include "types.h"
+#include "shell.h"
 
 void kernel_main()
 {

@@ -5,7 +5,7 @@ LD = i686-linux-gnu-ld
 OBJCOPY = i686-linux-gnu-objcopy
 
 # compiler and linker flags
-CFLAGS = -m32 -ffreestanding -fno-pie
+CFLAGS = -m32 -ffreestanding -fno-pie -std=c11 -Wall -Wextra -Werror -O2
 LDFLAGS = -m elf_i386 -T kernel/linker.ld
 
 DISK = disk.img
@@ -56,8 +56,11 @@ kernel/vga.o: kernel/vga.c
 kernel/shell.o: kernel/shell.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/panic.o: kernel/panic.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/panic.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf

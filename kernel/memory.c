@@ -1,8 +1,12 @@
 #include "memory.h"
 #include "types.h"
+#include "panic.h"
 
 //linker defines this. This is the memory address after all the kernel binary
 extern uint32_t kernel_end;
+
+//4mb max heap
+#define HEAP_MAX_SIZE 0x400000
 
 //We can make a simple bump allocator for now
 static uint32_t heap = 0;
@@ -22,6 +26,11 @@ void* malloc(uint32_t size)
     if (size % 4 != 0)
     {
         size += 4 - (size % 4);
+    }
+    
+    if (allocated + size > HEAP_MAX_SIZE)
+    {
+        kernel_panic("Out of memory, exceeded heap size.");
     }
 
     //simple, just keep track of the next free chunk of memory and move the heap pointer along

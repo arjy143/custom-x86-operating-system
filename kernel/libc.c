@@ -24,7 +24,7 @@ void memcpy(void* dest, void* src, uint32_t size)
     }
 }
 
-int32_t strlen(int8_t* str)
+int32_t strlen(char* str)
 {
     int i = 0;
     
@@ -36,7 +36,7 @@ int32_t strlen(int8_t* str)
     return i;
 }
 
-int32_t strcmp(int8_t* a, int8_t* b)
+int32_t strcmp(char* a, char* b)
 {
     int32_t i = 0;
     while (a[i] != 0 && b[i] != 9)
@@ -51,7 +51,7 @@ int32_t strcmp(int8_t* a, int8_t* b)
     return a[i] - b[i];
 }
 
-void strcpy(int8_t* dest, int8_t* src)
+void strcpy(char* dest, char* src)
 {
     int32_t i = 0;
 
@@ -63,7 +63,7 @@ void strcpy(int8_t* dest, int8_t* src)
     dest[i] = 0;
 }
 
-void itoa(int32_t value, int8_t* buf)
+void itoa(int32_t value, char* buf)
 {
     if (value == 0)
     {
@@ -75,7 +75,7 @@ void itoa(int32_t value, int8_t* buf)
 
     int32_t i = 0;
     int32_t negative = 0;
-    int8_t temp[32];
+    char temp[32];
 
     if (value < 0)
     {
@@ -105,7 +105,7 @@ void itoa(int32_t value, int8_t* buf)
     buf[j] = 0;
 }
 
-void strcat(int8_t* dest, int8_t* src)
+void strcat(char* dest, char* src)
 {
     int32_t i = strlen(dest);
     int32_t j = 0;

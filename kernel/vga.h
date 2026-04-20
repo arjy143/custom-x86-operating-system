@@ -10,11 +10,11 @@
 #define VGA_ROWS 25
 #define WHITE_ON_BLACK 0x0f
 
-void vga_write_char(int32_t col, int32_t row, int8_t c, int8_t colour);
+void vga_write_char(int32_t col, int32_t row, char c, int8_t colour);
 
 void vga_clear();
 
-void vga_print(int32_t col, int32_t row, int8_t* str, int8_t colour);
+void vga_print(int32_t col, int32_t row, char* str, int8_t colour);
 
 void vga_scroll();
 

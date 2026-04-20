@@ -25,7 +25,7 @@ static void newline()
     }
 }
 
-static void print(int8_t* str, int8_t colour)
+static void print(char* str, int8_t colour)
 {
     int32_t i = 0;
     while (str[i] != 0)
@@ -42,7 +42,7 @@ static void print(int8_t* str, int8_t colour)
     }
 }
 
-static void println(int8_t* str, int8_t colour)
+static void println(char* str, int8_t colour)
 {
     print(str, colour);
     newline();
@@ -72,14 +72,14 @@ static void cmd_clear()
 
 static void cmd_mem()
 {
-    int8_t buffer[32];
+    char buffer[32];
     itoa(memory_used(), buffer);
     print("Memory allocated: ", OUTPUT_COLOUR);
     print(buffer, OUTPUT_COLOUR);
     println("bytes.", OUTPUT_COLOUR);
 }
 
-static void cmd_echo(int8_t* args)
+static void cmd_echo(char* args)
 {
     if (args == 0 || strlen(args) == 0)
     {
@@ -91,7 +91,7 @@ static void cmd_echo(int8_t* args)
     }
 }
 
-static void parse_and_run(int8_t* input)
+static void parse_and_run(char* input)
 {
     int32_t i = 0;
     while (input[i] == ' ')
@@ -99,7 +99,7 @@ static void parse_and_run(int8_t* input)
         i++;
     }
 
-    int8_t* cmd = input + i;
+    char* cmd = input + i;
 
     //after trimming whitespace, if input is empty then ignore
     if (strlen(cmd) == 0)
@@ -114,7 +114,7 @@ static void parse_and_run(int8_t* input)
         j++;
     }
 
-    int8_t* args = 0;
+    char* args = 0;
     if (cmd[j] == ' ')
     {
         cmd[j] = 0;
@@ -157,7 +157,7 @@ void shell_init()
     print_prompt();
 }
 
-void shell_putchar(int8_t c)
+void shell_putchar(char c)
 {
     vga_write_char(cursor_col, cursor_row, c, OUTPUT_COLOUR);
     cursor_col++;
@@ -177,7 +177,7 @@ void shell_backspace()
     }
 }
 
-void shell_process(int8_t* input)
+void shell_process(char* input)
 {
     newline();
     parse_and_run(input);
