@@ -16,9 +16,10 @@ static void newline()
     cursor_col = 0;
     cursor_row++;
     
-    //prevent scrolling for now
+    //now allow scrolling
     if (cursor_row >= VGA_ROWS)
     {
+        vga_scroll();
         cursor_row = VGA_ROWS - 1;
     }
 }

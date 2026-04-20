@@ -30,3 +30,26 @@ void vga_print(int col, int row, char* str, char colour)
         i++;
     }
 }
+
+void vga_scroll()
+{
+    int row;
+    int col;
+
+    //copy rows up by 1, then clear the last row
+    for (row = 0; row < VGA_ROWS - 1; row++)
+    {
+        for (col = 0; col < VGA_COLS - 1; col++) 
+        {
+            int dest = row * VGA_COLS + col;
+            int src = (row + 1) * VGA_COLS + col;
+            vga[dest] = vga[src];
+        }
+    }
+
+    for (col = 0; col < VGA_COLS; col++)
+    {
+        int index = (VGA_ROWS - 1) * VGA_COLS + col;
+        vga[index] = (unsigned short)' ' | ((unsigned short)WHITE_ON_BLACK << 8); 
+    }
+}

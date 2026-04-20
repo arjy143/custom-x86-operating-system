@@ -14,4 +14,6 @@ void vga_clear();
 
 void vga_print(int col, int row, char* str, char colour);
 
+void vga_scroll();
+
 #endif
