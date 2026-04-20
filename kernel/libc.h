@@ -1,19 +1,21 @@
 #ifndef LIBC_H
 #define LIBC_H
 
+#include "types.h"
+
 //bare minimum libc functions that could be useful for kernel level applications
-void memset(void* ptr, unsigned char value, unsigned int size);
+void memset(void* ptr, uint8_t value, uint32_t size);
 
-void memcpy(void* dest, void* src, unsigned int size);
+void memcpy(void* dest, void* src, uint32_t size);
 
-int strlen(char* str); 
+int strlen(int8_t* str); 
 
-int strcmp(char* a, char* b);
+int strcmp(int8_t* a, int8_t* b);
 
-void strcpy(char* dest, char* src);
+void strcpy(int8_t* dest, int8_t* src);
 
-void itoa(int value, char* buf);
+void itoa(int32_t value, int8_t* buf);
 
-void strcat(char* dest, char* src);
+void strcat(int8_t* dest, int8_t* src);
 
 #endif

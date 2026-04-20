@@ -2,7 +2,7 @@
 #include "vga.h"
 #include "keyboard.h"
 #include "memory.h"
-
+#include "types.h"
 
 void kernel_main()
 {
@@ -16,7 +16,6 @@ void kernel_main()
 
     //now the hardware can interrupt us
     __asm__ volatile ("sti");
-
     
 
     for (;;)

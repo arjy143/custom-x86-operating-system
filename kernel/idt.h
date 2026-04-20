@@ -1,6 +1,8 @@
 #ifndef IDT_H
 #define IDT_H
 
+#include "types.h"
+
 //cpu exception handlers
 extern void isr0();  
 extern void isr1();  
@@ -63,23 +65,23 @@ Bits 48-63   Upper 16 bits of handler function address
 */
 struct idt_entry
 {
-    unsigned short base_low;
-    unsigned short selector;
-    unsigned char zero;
-    unsigned char attributes;
-    unsigned short base_high;
+    uint16_t base_low;
+    uint16_t selector;
+    uint8_t zero;
+    uint8_t attributes;
+    uint16_t base_high;
 } __attribute__((packed));
 
 //pointed at by IDT
 struct idt_descriptor
 {
-    unsigned short limit;
-    unsigned int base;
+    uint16_t limit;
+    uint32_t base;
 } __attribute__((packed));
 
 //declaring idt related functions
 
-void idt_set_entry(int index, unsigned int base, unsigned short selector, unsigned char attributes);
+void idt_set_entry(int32_t index, uint32_t base, uint16_t selector, uint8_t attributes);
 
 void idt_init();
 

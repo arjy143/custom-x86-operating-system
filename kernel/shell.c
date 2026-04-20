@@ -2,14 +2,15 @@
 #include "vga.h"
 #include "libc.h"
 #include "memory.h"
+#include "types.h"
 
 //set colours green, white, red respectively
 #define PROMPT_COLOUR 0x0a
 #define OUTPUT_COLOUR 0x0f
 #define ERROR_COLOUR 0x0c
 
-static int cursor_row = 0;
-static int cursor_col = 0;
+static int32_t cursor_row = 0;
+static int32_t cursor_col = 0;
 
 static void newline()
 {
@@ -24,9 +25,9 @@ static void newline()
     }
 }
 
-static void print(char* str, char colour)
+static void print(int8_t* str, int8_t colour)
 {
-    int i = 0;
+    int32_t i = 0;
     while (str[i] != 0)
     {
         //wrap around to next line
@@ -41,7 +42,7 @@ static void print(char* str, char colour)
     }
 }
 
-static void println(char* str, char colour)
+static void println(int8_t* str, int8_t colour)
 {
     print(str, colour);
     newline();
@@ -71,14 +72,14 @@ static void cmd_clear()
 
 static void cmd_mem()
 {
-    char buffer[32];
+    int8_t buffer[32];
     itoa(memory_used(), buffer);
     print("Memory allocated: ", OUTPUT_COLOUR);
     print(buffer, OUTPUT_COLOUR);
     println("bytes.", OUTPUT_COLOUR);
 }
 
-static void cmd_echo(char* args)
+static void cmd_echo(int8_t* args)
 {
     if (args == 0 || strlen(args) == 0)
     {
@@ -90,15 +91,15 @@ static void cmd_echo(char* args)
     }
 }
 
-static void parse_and_run(char* input)
+static void parse_and_run(int8_t* input)
 {
-    int i = 0;
+    int32_t i = 0;
     while (input[i] == ' ')
     {
         i++;
     }
 
-    char* cmd = input + i;
+    int8_t* cmd = input + i;
 
     //after trimming whitespace, if input is empty then ignore
     if (strlen(cmd) == 0)
@@ -107,13 +108,13 @@ static void parse_and_run(char* input)
     }
 
     //parse command and args, and call corresponding inbuilt function
-    int j = 0;
+    int32_t j = 0;
     while (cmd[j] != ' ' && cmd[j] != 0)
     {
         j++;
     }
 
-    char* args = 0;
+    int8_t* args = 0;
     if (cmd[j] == ' ')
     {
         cmd[j] = 0;
@@ -156,7 +157,7 @@ void shell_init()
     print_prompt();
 }
 
-void shell_putchar(char c)
+void shell_putchar(int8_t c)
 {
     vga_write_char(cursor_col, cursor_row, c, OUTPUT_COLOUR);
     cursor_col++;
@@ -176,7 +177,7 @@ void shell_backspace()
     }
 }
 
-void shell_process(char* input)
+void shell_process(int8_t* input)
 {
     newline();
     parse_and_run(input);

@@ -2,6 +2,7 @@
 #include "vga.h"
 #include "io.h"
 #include "shell.h"
+#include "types.h"
 
 //basic scan code lookup table, containing the outputs for each index
 
@@ -62,17 +63,17 @@ static char scancode_table_shift[128] =
 
 //keyboard.c should no longer directly call the write functions, but instead should simply store the characters in a buffer, which the shell can read.
 #define INPUT_BUFFER_SIZE 256
-static char input_buffer[INPUT_BUFFER_SIZE];
-static int input_len = 0;
+static uint8_t input_buffer[INPUT_BUFFER_SIZE];
+static int32_t input_len = 0;
 
-static int shift_held = 0;
-static int caps_lock = 0;
+static int32_t shift_held = 0;
+static int32_t caps_lock = 0;
 
 //handle irq1
 void keyboard_handler()
 {
     //read scan code
-    unsigned char scan_code = port_in(0x60);
+    uint8_t scan_code = port_in(0x60);
     
     //check if shift is held or not
     if (scan_code == 0x2a || scan_code == 0x36)
@@ -124,7 +125,7 @@ void keyboard_handler()
     }
     
     //get base character from normal table, and if caps lock is active or shift is pressed, switch to shift table
-    char c = scancode_table[scan_code];
+    int8_t c = scancode_table[scan_code];
     
     if (c == 0)
     {

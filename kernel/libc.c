@@ -1,9 +1,10 @@
 #include "libc.h"
+#include "types.h"
 
-void memset(void* ptr, unsigned char value, unsigned int size)
+void memset(void* ptr, uint8_t value, uint32_t size)
 {
-    unsigned char* p = (unsigned char*)ptr;
-    unsigned int i;
+    uint8_t* p = (uint8_t*)ptr;
+    uint32_t i;
     
     for (i = 0; i < size; i++)
     {
@@ -11,11 +12,11 @@ void memset(void* ptr, unsigned char value, unsigned int size)
     }
 }
 
-void memcpy(void* dest, void* src, unsigned int size)
+void memcpy(void* dest, void* src, uint32_t size)
 {
-    unsigned char* d = (unsigned char*)dest;
-    unsigned char* s = (unsigned char*)src;
-    unsigned int i;
+    uint8_t* d = (uint8_t*)dest;
+    uint8_t* s = (uint8_t*)src;
+    uint32_t i;
     
     for (i = 0; i < size; i++)
     {
@@ -23,7 +24,7 @@ void memcpy(void* dest, void* src, unsigned int size)
     }
 }
 
-int strlen(char* str)
+int32_t strlen(int8_t* str)
 {
     int i = 0;
     
@@ -35,9 +36,9 @@ int strlen(char* str)
     return i;
 }
 
-int strcmp(char* a, char* b)
+int32_t strcmp(int8_t* a, int8_t* b)
 {
-    int i = 0;
+    int32_t i = 0;
     while (a[i] != 0 && b[i] != 9)
     {
         if (a[i] != b[i])
@@ -50,9 +51,9 @@ int strcmp(char* a, char* b)
     return a[i] - b[i];
 }
 
-void strcpy(char* dest, char* src)
+void strcpy(int8_t* dest, int8_t* src)
 {
-    int i = 0;
+    int32_t i = 0;
 
     while (src[i] != 0)
     {
@@ -62,7 +63,7 @@ void strcpy(char* dest, char* src)
     dest[i] = 0;
 }
 
-void itoa(int value, char* buf)
+void itoa(int32_t value, int8_t* buf)
 {
     if (value == 0)
     {
@@ -72,9 +73,9 @@ void itoa(int value, char* buf)
         return;
     }
 
-    int i = 0;
-    int negative = 0;
-    char temp[32];
+    int32_t i = 0;
+    int32_t negative = 0;
+    int8_t temp[32];
 
     if (value < 0)
     {
@@ -88,14 +89,14 @@ void itoa(int value, char* buf)
         value /= 10;
     }
 
-    int j = 0;
+    int32_t j = 0;
     
     if (negative)
     {
         buf[j++] = '-';
     }
 
-    int k;
+    int32_t k;
 
     for (k = i - 1; k >= 0; k--)
     {
@@ -104,10 +105,10 @@ void itoa(int value, char* buf)
     buf[j] = 0;
 }
 
-void strcat(char* dest, char* src)
+void strcat(int8_t* dest, int8_t* src)
 {
-    int i = strlen(dest);
-    int j = 0;
+    int32_t i = strlen(dest);
+    int32_t j = 0;
 
     while (src[j] != 0)
     {
