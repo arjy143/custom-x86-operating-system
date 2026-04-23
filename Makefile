@@ -59,8 +59,11 @@ kernel/shell.o: kernel/shell.c
 kernel/panic.o: kernel/panic.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/timer.o: kernel/timer.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/panic.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/panic.o kernel/timer.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf

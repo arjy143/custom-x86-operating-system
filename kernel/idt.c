@@ -2,6 +2,43 @@
 #include "io.h"
 #include "keyboard.h"
 #include "panic.h"
+#include "timer.h"
+
+char* exceptions[] = 
+{
+    "Division by zero",
+    "Debug",
+    "Non maskable interrupt",
+    "Breakpoint",
+    "Overflow",
+    "Bound range exceeded",
+    "Invalid opcode",
+    "Device not available",
+    "Double fault",
+    "Coprocessor segment overrun",
+    "Invalid TSS",
+    "Segment not present",
+    "Stack segment fault",
+    "General protection fault",
+    "Page fault",
+    "Reserved",
+    "x87 floating point",
+    "Alignment check",
+    "Machine check",
+    "SIMD floating point",
+    "Virtualisation",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved", 
+    "Reserved",
+    "Security exception",
+    "Reserved"
+};
 
 //the IDT data structure itself, holding 256 entries at 8 bytes each
 struct idt_entry idt[256];
@@ -135,43 +172,12 @@ void isr_handler(uint32_t esp)
     //providing readable panic messages for the intel cpu exceptions
     if (int_num < 32)
     {
-        char* exceptions[] = 
-        {
-            "Division by zero",
-            "Debug",
-            "Non maskable interrupt",
-            "Breakpoint",
-            "Overflow",
-            "Bound range exceeded",
-            "Invalid opcode",
-            "Device not available",
-            "Double fault",
-            "Coprocessor segment overrun",
-            "Invalid TSS",
-            "Segment not present",
-            "Stack segment fault",
-            "General protection fault",
-            "Page fault",
-            "Reserved",
-            "x87 floating point",
-            "Alignment check",
-            "Machine check",
-            "SIMD floating point",
-            "Virtualisation",
-            "Reserved",
-            "Reserved",
-            "Reserved",
-            "Reserved",
-            "Reserved",
-            "Reserved",
-            "Reserved",
-            "Reserved", 
-            "Reserved",
-            "Security exception",
-            "Reserved"
-        };
-
         kernel_panic(exceptions[int_num]);
+    }
+    
+    if (int_num == 32)
+    {
+        timer_handler();
     }
 
     if (int_num == 33)

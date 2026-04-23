@@ -3,6 +3,7 @@
 #include "libc.h"
 #include "memory.h"
 #include "types.h"
+#include "timer.h"
 
 //set colours green, white, red respectively
 #define PROMPT_COLOUR 0x0a
@@ -61,6 +62,7 @@ static void cmd_help()
     println("clear: clear screen", OUTPUT_COLOUR);
     println("mem: show memory usage", OUTPUT_COLOUR);
     println("echo <text>: print text to screen", OUTPUT_COLOUR);
+    println("uptime: show seconds since startup", OUTPUT_COLOUR);
 }
 
 static void cmd_clear()
@@ -76,7 +78,7 @@ static void cmd_mem()
     itoa(memory_used(), buffer);
     print("Memory allocated: ", OUTPUT_COLOUR);
     print(buffer, OUTPUT_COLOUR);
-    println("bytes.", OUTPUT_COLOUR);
+    println(" bytes.", OUTPUT_COLOUR);
 }
 
 static void cmd_echo(char* args)
@@ -89,6 +91,14 @@ static void cmd_echo(char* args)
     {
         println(args, OUTPUT_COLOUR);
     }
+}
+
+static void cmd_uptime()
+{
+    char buf[32];
+    itoa(timer_get_seconds(), buf);
+    print(buf, OUTPUT_COLOUR);
+    println(" seconds.", OUTPUT_COLOUR);
 }
 
 static void parse_and_run(char* input)
@@ -137,6 +147,10 @@ static void parse_and_run(char* input)
     {
         cmd_echo(args);
     }
+    else if (strcmp(cmd, "uptime") == 0)
+    {
+        cmd_uptime();
+    }
     else
     {
         print("Uknown command: ", ERROR_COLOUR);
@@ -152,7 +166,7 @@ void shell_init()
 {
     vga_clear();
     println("=====Shell Test=====", PROMPT_COLOUR);
-    println("commands: help; clear; mem; echo <arg>;", PROMPT_COLOUR);
+    println("commands: help; clear; mem; echo <text>; uptime;", PROMPT_COLOUR);
     newline();
     print_prompt();
 }
