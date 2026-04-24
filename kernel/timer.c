@@ -29,7 +29,8 @@ void timer_init(uint32_t frequency)
 void timer_handler()
 {
     ticks++;
-
+    
+    //TODO: instead of doing modulo, we could keep track of when the next second boundary should occur, which avoids dividing.
     if (ticks % hz == 0)
     {
         seconds++;
