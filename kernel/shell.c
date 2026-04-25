@@ -150,6 +150,25 @@ static void cmd_memmap()
     }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+
+static void cmd_rawmem() {
+    uint8_t* p = (uint8_t*)0x500;
+    char buffer[32];
+    uint32_t i;
+    for (i = 0; i < 100; i++) {
+        itoa(p[i], buffer);
+        print(buffer, OUTPUT_COLOUR);
+        print(" ", OUTPUT_COLOUR);
+        if ((i + 1) % 8 == 0) {
+            newline();
+        }
+    }
+    newline();
+}
+#pragma GCC diagnostic pop
+
 static void parse_and_run(char* input)
 {
     int32_t i = 0;
@@ -203,6 +222,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "memmap") == 0)
     {
         cmd_memmap();
+    }
+    else if (strcmp(cmd, "rawmem") == 0)
+    {
+        cmd_rawmem();
     }
     else
     {

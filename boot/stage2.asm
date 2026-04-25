@@ -1,9 +1,6 @@
 [bits 16]
 [org 0x0500]
 
-
-
-
 start:
     mov [boot_drive], dl
 
@@ -12,30 +9,43 @@ start:
     mov es, ax
     mov di, 0x504
     xor ebx, ebx
-    mov edx, 0x534D4150
+    mov edx, 0x534D4150 ; SMAP magic
     mov dword [0x500], 0
+    mov cx, 0
 
 .e820_loop:
+    ; loop until all the memory regions have been retrieved
     mov eax, 0xE820
     mov ecx, 24
     int 0x15
+
     jc .e820_done
+
+    mov ecx, 24
+
     cmp eax, 0x534D4150
     jne .e820_done
+
     xor ax, ax
     mov es, ax
+    mov edx, 0x534D4150
+
     inc dword [0x500]
     add di, 24
+    inc cx
+    cmp cx, 20
+
     test ebx, ebx
     jz .e820_done
     jmp .e820_loop
 
 .e820_done:
-    pop edx
-    mov dl, [boot_drive] 
-
     xor ax, ax
     mov es, ax
+    ; zero out everything
+    xor ecx, ecx
+    xor edx, edx
+    xor ebx, ebx
 
     mov si, msg
 
@@ -47,11 +57,6 @@ start:
     int 0x10
     jmp .print
 .done: 
-    
-    mov ah, 0x0e
-    mov al, [boot_drive]
-    int 0x10
-
     ; load kernel before gdt setup
     mov bx, 0x0000
     mov es, bx
@@ -60,7 +65,7 @@ start:
     mov al, 20
     mov ch, 0
     mov cl, 5
-    ;mov dl, [boot_drive]
+    mov dl, [boot_drive]
     int 0x13
     jc disk_error
 
