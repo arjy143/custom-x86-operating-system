@@ -38,7 +38,7 @@ void* malloc(uint32_t size)
     heap += size;
     allocated += size;
 
-    return (void*)&address;
+    return (void*)address;
 }
 
 uint32_t memory_used()

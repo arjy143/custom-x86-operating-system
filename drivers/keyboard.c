@@ -63,7 +63,7 @@ static char scancode_table_shift[128] =
 
 //keyboard.c should no longer directly call the write functions, but instead should simply store the characters in a buffer, which the shell can read.
 #define INPUT_BUFFER_SIZE 256
-static uint8_t input_buffer[INPUT_BUFFER_SIZE];
+static char input_buffer[INPUT_BUFFER_SIZE];
 static int32_t input_len = 0;
 
 static int32_t shift_held = 0;
