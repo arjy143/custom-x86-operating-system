@@ -1,9 +1,44 @@
 [bits 16]
 [org 0x0500]
 
+
+
+
 start:
     mov [boot_drive], dl
+
+    ; get memory map and store it at a specific address for use by the kernel
+    xor ax, ax
+    mov es, ax
+    mov di, 0x504
+    xor ebx, ebx
+    mov edx, 0x534D4150
+    mov dword [0x500], 0
+
+.e820_loop:
+    mov eax, 0xE820
+    mov ecx, 24
+    int 0x15
+    jc .e820_done
+    cmp eax, 0x534D4150
+    jne .e820_done
+    xor ax, ax
+    mov es, ax
+    inc dword [0x500]
+    add di, 24
+    test ebx, ebx
+    jz .e820_done
+    jmp .e820_loop
+
+.e820_done:
+    pop edx
+    mov dl, [boot_drive] 
+
+    xor ax, ax
+    mov es, ax
+
     mov si, msg
+
 .print:
     lodsb
     test al, al
@@ -12,6 +47,10 @@ start:
     int 0x10
     jmp .print
 .done: 
+    
+    mov ah, 0x0e
+    mov al, [boot_drive]
+    int 0x10
 
     ; load kernel before gdt setup
     mov bx, 0x0000
@@ -20,8 +59,8 @@ start:
     mov ah, 0x02
     mov al, 20
     mov ch, 0
-    mov cl, 7
-    mov dl, [boot_drive]
+    mov cl, 5
+    ;mov dl, [boot_drive]
     int 0x13
     jc disk_error
 
@@ -90,7 +129,7 @@ boot_drive db 0
 msg db "stage 2 loading in progress...", 0x0d, 0x0a, 0
 err_msg db "disk error occured.", 0x0d, 0x0a, 0
 
-times 512 - ($ - $$) db 0
+times 1024 - ($ - $$) db 0
 
 ; now in 32 bit protected mode
 [bits 32]

@@ -15,7 +15,7 @@ start:
     ; stage 2 loading from disk
     mov bx, 0x0500 ; next free chunk of memory
     mov ah, 0x02 ; disk services: function to read sector
-    mov al, 10 ; read n sectors
+    mov al, 4 ; read n sectors
     
     ; cylinder, sector, head
     mov ch, 0

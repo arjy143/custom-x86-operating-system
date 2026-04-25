@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "types.h"
 #include "timer.h"
+#include "memmap.h"
 
 //set colours green, white, red respectively
 #define PROMPT_COLOUR 0x0a
@@ -63,6 +64,7 @@ static void cmd_help()
     println("mem: show memory usage", OUTPUT_COLOUR);
     println("echo <text>: print text to screen", OUTPUT_COLOUR);
     println("uptime: show seconds since startup", OUTPUT_COLOUR);
+    println("memmap: show memory regions", OUTPUT_COLOUR);
 }
 
 static void cmd_clear()
@@ -99,6 +101,53 @@ static void cmd_uptime()
     itoa(timer_get_seconds(), buf);
     print(buf, OUTPUT_COLOUR);
     println(" seconds.", OUTPUT_COLOUR);
+}
+
+static void cmd_memmap()
+{
+    uint32_t count = memmap_count();
+    char buffer[32];
+
+    itoa(count, buffer);
+    print("Memory regions: ", OUTPUT_COLOUR);
+    println(buffer, OUTPUT_COLOUR);
+
+    uint32_t i;
+    for (i = 0; i < count; i++)
+    {
+        struct memory_region* r = memmap_get(i);
+
+        print(" base: ", OUTPUT_COLOUR);
+        itoa((uint32_t)r->base, buffer);
+        print(buffer, OUTPUT_COLOUR);
+
+        print(" length: ", OUTPUT_COLOUR);
+        itoa((uint32_t)r->length, buffer);
+        print(buffer, OUTPUT_COLOUR);
+
+        print(" type: ", OUTPUT_COLOUR);
+        switch (r->type)
+        {
+            case MEMORY_USABLE:
+                println("Usable", 0x0a);
+                break;
+            case MEMORY_RESERVED:
+                println("Reserved", 0x0a);
+                break;
+            case MEMORY_ACPI:
+                println("ACPI", 0x0a);
+                break;
+            case MEMORY_ACPI_NVS:
+                println("ACPI NVS", 0x0a);
+                break;
+            case MEMORY_BAD:
+                println("Bad", 0x0a);
+                break;
+            default:
+                println("Unknown", 0x0a);
+                break;
+        }
+    }
 }
 
 static void parse_and_run(char* input)
@@ -151,6 +200,10 @@ static void parse_and_run(char* input)
     {
         cmd_uptime();
     }
+    else if (strcmp(cmd, "memmap") == 0)
+    {
+        cmd_memmap();
+    }
     else
     {
         print("Uknown command: ", ERROR_COLOUR);
@@ -166,7 +219,7 @@ void shell_init()
 {
     vga_clear();
     println("=====Shell Test=====", PROMPT_COLOUR);
-    println("commands: help; clear; mem; echo <text>; uptime;", PROMPT_COLOUR);
+    println("Input \"help\" to see possible commands.", PROMPT_COLOUR);
     newline();
     print_prompt();
 }

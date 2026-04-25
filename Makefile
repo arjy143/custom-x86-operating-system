@@ -18,7 +18,7 @@ $(DISK): boot/boot.bin boot/stage2.bin kernel/kernel.bin
 	dd if=/dev/zero of=$(DISK) bs=512 count=$(SECTORS)
 	dd if=boot/boot.bin of=$(DISK) conv=notrunc bs=512 seek=0
 	dd if=boot/stage2.bin of=$(DISK) conv=notrunc bs=512 seek=1
-	dd if=kernel/kernel.bin of=$(DISK) conv=notrunc bs=512 seek=6
+	dd if=kernel/kernel.bin of=$(DISK) conv=notrunc bs=512 seek=4
 
 # $< refers to first dependency
 # $@ refers to target name
@@ -62,8 +62,11 @@ kernel/panic.o: kernel/panic.c
 kernel/timer.o: kernel/timer.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+kernel/memmap.o: kernel/memmap.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # link kernel
-kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/panic.o kernel/timer.o kernel/kernel.o
+kernel/kernel.elf: kernel/kernel_entry.o kernel/isr.o kernel/idt.o kernel/keyboard.o kernel/memory.o kernel/libc.o kernel/vga.o kernel/shell.o kernel/panic.o kernel/timer.o kernel/memmap.o kernel/kernel.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 kernel/kernel.bin: kernel/kernel.elf
