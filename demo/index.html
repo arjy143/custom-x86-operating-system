@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>x86 OS</title>
+    <style>
+        body {
+            background: #111;
+            color: #ccc;
+            font-family: monospace;
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        #screen_container {
+            width: 720px;
+            height: 400px;
+            background: #000;
+            border: 1px solid #333;
+        }
+
+        #screen_container canvas {
+            display: block;
+        }
+
+        .controls {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            background: #222;
+            color: #ccc;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        button:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        #status {
+            margin-top: 10px;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        table {
+            margin-top: 40px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            padding: 6px 12px;
+            border: 1px solid #222;
+            font-size: 0.9rem;
+        }
+
+        td:first-child {
+            color: #fff;
+            width: 160px;
+        }
+
+        td:last-child {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>x86 OS</h1>
+    <p>An x86 operating system written in assembly and C.</p>
+
+    <div id="screen_container">
+        <canvas></canvas>
+    </div>
+
+    <div class="controls">
+        <button onclick="startEmulator()">Start</button>
+        <button onclick="restartEmulator()">Restart</button>
+    </div>
+
+    <p id="status">Click Start to boot.</p>
+
+    <table>
+        <tr><td>help</td>    <td>list available commands</td></tr>
+        <tr><td>echo &lt;text&gt;</td> <td>print text to screen</td></tr>
+        <tr><td>clear</td>   <td>clear the screen</td></tr>
+        <tr><td>mem</td>     <td>show memory usage</td></tr>
+        <tr><td>uptime</td>  <td>seconds since boot</td></tr>
+        <tr><td>memmap</td>  <td>show BIOS memory map</td></tr>
+    </table>
+
+    <script src="v86/libv86.js"></script>
+    <script>
+        var emulator = null;
+
+        function startEmulator() {
+            if (emulator) return;
+            document.getElementById('status').textContent = 'Booting...';
+            emulator = new V86({
+                screen_container: document.getElementById('screen_container'),
+                bios:     { url: 'v86/seabios.bin' },
+                vga_bios: { url: 'v86/vgabios.bin' },
+                fda:      { url: '../disk.img' },
+                boot_order: 0x1,
+                memory_size: 128 * 1024 * 1024,
+                vga_memory_size: 2 * 1024 * 1024,
+                autostart: true,
+            });
+            emulator.add_listener('emulator-ready', function() {
+                document.getElementById('status').textContent =
+                    'Running - click the screen to type.';
+            });
+        }
+
+        function restartEmulator() {
+            if (emulator) {
+                emulator.restart();
+                document.getElementById('status').textContent = 'Rebooting...';
+            }
+        }
+
+        function focusEmulator() {
+            var canvas = document.querySelector('#screen_container canvas');
+            if (canvas) canvas.focus();
+        }
+    </script>
+
+</body>
+</html>
