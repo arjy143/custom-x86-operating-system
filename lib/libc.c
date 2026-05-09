@@ -105,6 +105,26 @@ void itoa(int32_t value, char* buf)
     buf[j] = 0;
 }
 
+//num to hex string function, specifically for memory addresses
+//only for 32 bit
+//TODO: make another func for 64 bit eventually
+void itoa_hex(int32_t value, char* buf)
+{
+    char hex_chars[] = "0123456789ABCDEF";
+    int i = 0;
+
+    buf[0] = '0';
+    buf[1] = 'x';
+
+    for (i = 0; i < 8; i++)
+    {
+        uint8_t nibble = (value >> (28 - i * 4)) & 0xf;
+        buf[i + 2] = hex_chars[nibble];
+    }
+
+    buf[10] = 0;
+}
+
 void strcat(char* dest, char* src)
 {
     int32_t i = strlen(dest);

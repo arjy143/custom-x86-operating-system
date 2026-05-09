@@ -27,4 +27,9 @@ uint32_t memmap_count();
 //get pointer to specific entry
 struct memory_region* memmap_get(uint32_t i);
 
+//qemu is acting weird, so need to manually add the specific memory regions not currently being found
+void memmap_supplement();
+
+uint32_t memmap_total_usable();
+
 #endif

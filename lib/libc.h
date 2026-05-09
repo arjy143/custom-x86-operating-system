@@ -16,6 +16,8 @@ void strcpy(char* dest, char* src);
 
 void itoa(int32_t value, char* buf);
 
+void itoa_hex(int32_t value, char* buf);
+
 void strcat(char* dest, char* src);
 
 #endif

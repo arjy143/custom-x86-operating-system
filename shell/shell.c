@@ -118,7 +118,7 @@ static void cmd_memmap()
         struct memory_region* r = memmap_get(i);
 
         print(" base: ", OUTPUT_COLOUR);
-        itoa((uint32_t)r->base, buffer);
+        itoa_hex((uint32_t)r->base, buffer);
         print(buffer, OUTPUT_COLOUR);
 
         print(" length: ", OUTPUT_COLOUR);
@@ -148,6 +148,14 @@ static void cmd_memmap()
                 break;
         }
     }
+
+    //print total memory used
+    char buffer2[32];
+    
+    itoa(memmap_total_usable() / 1024 / 1024, buffer2);
+    print("Total usable: ", OUTPUT_COLOUR);
+    print(buffer2, OUTPUT_COLOUR);
+    println(" MB", OUTPUT_COLOUR);
 }
 
 #pragma GCC diagnostic push
