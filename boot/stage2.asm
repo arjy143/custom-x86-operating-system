@@ -62,7 +62,7 @@ start:
     mov es, bx
     mov bx, 0x1000
     mov ah, 0x02
-    mov al, 20
+    mov al, 30
     mov ch, 0
     mov cl, 5
     mov dl, [boot_drive]
@@ -152,7 +152,7 @@ init_pm:
     ; copying kernel from 0x1000 to 0x100000
     mov esi, 0x1000
     mov edi, 0x100000
-    mov ecx, 2560 ; dwords to copy, each is 4 bytes so about 20 sectors
+    mov ecx, 3840 ; dwords to copy, each is 4 bytes so 30 sectors
     rep movsd ; repeat copying dword from esi to edi
     jmp 0x100000
     ; the jmp takes us to the kernel code now, so any code below this is redundant.

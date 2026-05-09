@@ -6,6 +6,7 @@
 #include "shell.h"
 #include "timer.h"
 #include "memmap.h"
+#include "pmm.h"
 
 void kernel_main()
 {
@@ -16,6 +17,8 @@ void kernel_main()
 
     //ensure all memory regions are correctly registered
     memmap_supplement(); 
+    
+    pmm_init();
 
     idt_init();
     timer_init(100);    

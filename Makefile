@@ -22,6 +22,7 @@ KERNEL_OBJS = \
     drivers/timer.o \
     mm/memory.o \
     mm/memmap.o \
+    mm/pmm.o \
     lib/libc.o \
     shell/shell.o \
     kernel/kernel.o
@@ -72,6 +73,9 @@ mm/memory.o: mm/memory.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 mm/memmap.o: mm/memmap.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+mm/pmm.o: mm/pmm.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lib/libc.o: lib/libc.c

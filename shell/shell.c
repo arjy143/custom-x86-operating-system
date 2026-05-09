@@ -5,6 +5,7 @@
 #include "types.h"
 #include "timer.h"
 #include "memmap.h"
+#include "pmm.h"
 
 //set colours green, white, red respectively
 #define PROMPT_COLOUR 0x0a
@@ -65,6 +66,7 @@ static void cmd_help()
     println("echo <text>: print text to screen", OUTPUT_COLOUR);
     println("uptime: show seconds since startup", OUTPUT_COLOUR);
     println("memmap: show memory regions", OUTPUT_COLOUR);
+    println("pmm: show physical memory usage", OUTPUT_COLOUR);
 }
 
 static void cmd_clear()
@@ -158,6 +160,28 @@ static void cmd_memmap()
     println(" MB", OUTPUT_COLOUR);
 }
 
+static void cmd_pmm()
+{
+    char buffer[32];
+
+    print("Total frames: ", OUTPUT_COLOUR);
+    itoa(pmm_free_frames() + pmm_used_frames(), buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Used frames: ", OUTPUT_COLOUR);
+    itoa(pmm_used_frames(), buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Free frames: ", OUTPUT_COLOUR);
+    itoa(pmm_free_frames(), buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Free memory: ", OUTPUT_COLOUR);
+    itoa((pmm_free_frames() * 4) / 1024, buffer);
+    print(buffer, OUTPUT_COLOUR);
+    println(" MB", OUTPUT_COLOUR);
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
@@ -230,6 +254,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "memmap") == 0)
     {
         cmd_memmap();
+    }
+    else if (strcmp(cmd, "pmm") == 0)
+    {
+        cmd_pmm();
     }
     else if (strcmp(cmd, "rawmem") == 0)
     {
