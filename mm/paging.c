@@ -31,10 +31,6 @@ void paging_init()
     for (i = 0; i < ENTRIES_PER_TABLE; i++)
     {
         page_directory[i] = 0;
-    }
-
-    for (i = 0; i < ENTRIES_PER_TABLE; i++)
-    {
         first_page_table[i] = 0;
     }
 
@@ -48,6 +44,10 @@ void paging_init()
 
     //load first page table into directory entry 0
     page_directory[0] = ((uint32_t)first_page_table) | PAGE_PRESENT | PAGE_WRITABLE;
+
+    //load kernel into directory 768, which should cover 0xC0000000 - 0x003FFFFF
+    //VGA will also get mapped through this, from 0xB8000 to 0xC00B8000
+    page_directory[768] = ((uint32_t)first_page_table) | PAGE_PRESENT | PAGE_WRITABLE;
     
     //load page directory into cr3 and set bit 31 of cr0 to enable paging
     __asm__ volatile

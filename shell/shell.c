@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "memmap.h"
 #include "pmm.h"
+#include "paging.h"
 
 //set colours green, white, red respectively
 #define PROMPT_COLOUR 0x0a
@@ -234,6 +235,57 @@ char buffer[32];
     println(" bytes (should be 0)", OUTPUT_COLOUR);
 }
 
+static void cmd_paging()
+{
+    char buffer[32];
+
+    //verify paging is set
+    uint32_t cr0;
+    __asm__ volatile ("mov %%cr0, %0" : "=r"(cr0));
+
+    print("CR0: ", OUTPUT_COLOUR);
+    itoa_hex(cr0, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    if (cr0 & 0x80000000)
+    {
+        println("Paging enabled.", PROMPT_COLOUR);
+    }
+    else
+    {
+        println("Paging disabled.", ERROR_COLOUR);
+    }
+
+    //verify which page directory is loaded
+    uint32_t cr3;
+    __asm__ volatile ("mov %%cr3, %0" : "=r"(cr3));
+
+    print("CR3: ", OUTPUT_COLOUR);
+    itoa_hex(cr3, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    //test higher half mapping by printing vga buffer character from physical and virtual mappings
+    print("VGA at 0x000B8000: ", OUTPUT_COLOUR);
+    uint16_t low = *((volatile uint16_t*)0x000B8000);
+    itoa_hex(low, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("VGA at 0xC00B8000: ", OUTPUT_COLOUR);
+    uint16_t high = *((volatile uint16_t*)0xC00B8000);
+    itoa_hex(high, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    if (low == high)
+    {
+        println("Higher half mapping worked.", PROMPT_COLOUR);
+    }
+    else
+    {
+        println("Higher half mapping failed.", ERROR_COLOUR);
+    }
+
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
@@ -314,6 +366,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "heaptest") == 0)
     {
         cmd_heaptest();
+    }
+    else if (strcmp(cmd, "paging") == 0)
+    {
+        cmd_paging();
     }
     else if (strcmp(cmd, "rawmem") == 0)
     {
