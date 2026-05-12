@@ -182,6 +182,58 @@ static void cmd_pmm()
     println(" MB", OUTPUT_COLOUR);
 }
 
+static void cmd_heaptest()
+{
+    
+char buffer[32];
+
+    print("Allocating 100 bytes... ", OUTPUT_COLOUR);
+    void *a = malloc(100);
+    itoa_hex((uint32_t)a, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Allocating 200 bytes... ", OUTPUT_COLOUR);
+    void *b = malloc(200);
+    itoa_hex((uint32_t)b, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Allocating 50 bytes...  ", OUTPUT_COLOUR);
+    void *c = malloc(50);
+    itoa_hex((uint32_t)c, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Heap used: ", OUTPUT_COLOUR);
+    itoa(memory_used(), buffer);
+    print(buffer, OUTPUT_COLOUR);
+    println(" bytes", OUTPUT_COLOUR);
+
+    print("Freeing middle block...", OUTPUT_COLOUR);
+    free(b);
+    println(" done", OUTPUT_COLOUR);
+
+    print("Heap used: ", OUTPUT_COLOUR);
+    itoa(memory_used(), buffer);
+    print(buffer, OUTPUT_COLOUR);
+    println(" bytes", OUTPUT_COLOUR);
+
+    print("Allocating 150 bytes... ", OUTPUT_COLOUR);
+    void *d = malloc(150);
+    itoa_hex((uint32_t)d, buffer);
+    println(buffer, OUTPUT_COLOUR);
+    print("(reused freed slot if same as b)", OUTPUT_COLOUR);
+    println("", OUTPUT_COLOUR);
+
+    free(a);
+    free(c);
+    free(d);
+    println("All freed", OUTPUT_COLOUR);
+
+    print("Heap used: ", OUTPUT_COLOUR);
+    itoa(memory_used(), buffer);
+    print(buffer, OUTPUT_COLOUR);
+    println(" bytes (should be 0)", OUTPUT_COLOUR);
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
@@ -258,6 +310,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "pmm") == 0)
     {
         cmd_pmm();
+    }
+    else if (strcmp(cmd, "heaptest") == 0)
+    {
+        cmd_heaptest();
     }
     else if (strcmp(cmd, "rawmem") == 0)
     {

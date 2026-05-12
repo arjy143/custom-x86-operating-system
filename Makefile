@@ -23,6 +23,7 @@ KERNEL_OBJS = \
     mm/memory.o \
     mm/memmap.o \
     mm/pmm.o \
+    mm/paging.o \
     lib/libc.o \
     shell/shell.o \
     kernel/kernel.o
@@ -76,6 +77,9 @@ mm/memmap.o: mm/memmap.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 mm/pmm.o: mm/pmm.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+mm/paging.o: mm/paging.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lib/libc.o: lib/libc.c

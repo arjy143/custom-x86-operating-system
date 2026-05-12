@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "memmap.h"
 #include "pmm.h"
+#include "paging.h"
 
 void kernel_main()
 {
@@ -22,6 +23,8 @@ void kernel_main()
     //set up heap and use malloc from now on
     memory_init();
     
+    //set
+    paging_init();
 
     idt_init();
     timer_init(100);    

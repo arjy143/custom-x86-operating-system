@@ -22,8 +22,6 @@ static uint32_t heap_used = 0;
 //We can make a simple bump allocator for allocating the bitmap
 static uint32_t bump_heap = 0;
 
-static uint32_t allocated = 0;
-
 void* bump_alloc(uint32_t size)
 {
     if (bump_heap == 0)
@@ -157,7 +155,7 @@ void free(void* ptr)
 
 uint32_t memory_used()
 {
-    return allocated;
+    return heap_used;
 }
 
 uint32_t memory_free()
