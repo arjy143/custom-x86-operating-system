@@ -18,3 +18,13 @@ void kernel_panic(char* message)
         __asm__ volatile ("hlt");
     }
 }
+
+void kernel_halt()
+{
+    __asm__ volatile ("cli");
+
+    for(;;)
+    {
+        __asm__ volatile ("hlt");
+    }
+}

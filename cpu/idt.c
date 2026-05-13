@@ -3,6 +3,8 @@
 #include "keyboard.h"
 #include "panic.h"
 #include "timer.h"
+#include "vga.h"
+#include "libc.h"
 
 char* exceptions[] = 
 {
@@ -169,6 +171,57 @@ void isr_handler(uint32_t esp)
     //this should get the interrupt number from the stack
     uint8_t int_num = *((uint8_t*)(esp + 48));
     
+    //page fault
+    if (int_num == 14)
+    {
+        uint32_t fault_address;
+        __asm__ volatile ("mov %%cr2, %0" : "=r"(fault_address));
+
+        //error code pushed onto stack, so we can access it as esp+52
+        uint32_t error_code = *((uint32_t*)(esp + 52));
+
+        char buffer[32];
+
+        vga_clear();
+        vga_print(0, 0, "PAGE FAULT", 0x04f);
+
+        vga_print(0, 2, "Faulting address: ", 0x07);
+        itoa_hex(fault_address, buffer);
+        vga_print(18, 2, buffer, 0x0F);
+
+        vga_print(0, 3, "Error code: ", 0x07);
+        itoa_hex(error_code, buffer);
+        vga_print(12, 3, buffer, 0x0F);
+
+        vga_print(0, 5, "Type:", 0x07);
+
+        if (error_code & 0x1) 
+        {
+            vga_print(0, 6, "  Protection violation", 0x0F);
+        } 
+        else 
+        {
+            vga_print(0, 6, "  Page not present", 0x0F);
+        }
+        if (error_code & 0x2) 
+        {
+            vga_print(0, 7, "  Write access", 0x0F);
+        } else 
+        {
+            vga_print(0, 7, "  Read access", 0x0F);
+        }
+        if (error_code & 0x4) 
+        {
+            vga_print(0, 8, "  User mode", 0x0F);
+        } 
+        else 
+        {
+            vga_print(0, 8, "  Kernel mode", 0x0F);
+        }
+
+        kernel_halt();
+    }
+
     //providing readable panic messages for the intel cpu exceptions
     if (int_num < 32)
     {

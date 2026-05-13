@@ -286,6 +286,15 @@ static void cmd_paging()
 
 }
 
+static void cmd_pagefault()
+{
+    println("Triggering page fault", ERROR_COLOUR);
+
+    volatile uint32_t* bad_ptr = (uint32_t*)0x80000000;
+
+    *bad_ptr = 0x12345678;
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
@@ -370,6 +379,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "paging") == 0)
     {
         cmd_paging();
+    }
+    else if (strcmp(cmd, "pagefault") == 0)
+    {
+        cmd_pagefault();
     }
     else if (strcmp(cmd, "rawmem") == 0)
     {
