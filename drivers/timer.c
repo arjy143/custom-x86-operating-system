@@ -1,5 +1,6 @@
 #include "timer.h"
 #include "io.h"
+#include "task.h"
 
 //channels live at 0x40,41,42
 #define PIT_CHANNEL0 0x40
@@ -35,6 +36,14 @@ void timer_handler()
     {
         seconds++;
     }
+    
+    //send end of interrupt signal before yielding to prevent PIC from blocking
+    port_out(0x20, 0x20);
+
+    //dangerous to context switch in the middle of an interrupt
+    //TODO: fix this
+    //switch tasks every tick
+    task_yield();
 }
 
 uint32_t timer_get_ticks()

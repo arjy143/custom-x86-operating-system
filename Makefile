@@ -17,6 +17,8 @@ KERNEL_OBJS = \
     cpu/isr.o \
     cpu/idt.o \
     cpu/panic.o \
+    cpu/switch.o \
+    cpu/task.o \
     drivers/vga.o \
     drivers/keyboard.o \
     drivers/timer.o \
@@ -55,10 +57,16 @@ kernel/kernel.o: kernel/kernel.c
 cpu/isr.o: cpu/isr.asm
 	$(AS) -f elf $< -o $@
 
+cpu/switch.o: cpu/switch.asm
+	$(AS) -f elf $< -o $@
+
 cpu/idt.o: cpu/idt.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 cpu/panic.o: cpu/panic.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+cpu/task.o: cpu/task.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 drivers/vga.o: drivers/vga.c

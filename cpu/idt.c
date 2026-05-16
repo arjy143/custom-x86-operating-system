@@ -231,6 +231,9 @@ void isr_handler(uint32_t esp)
     if (int_num == 32)
     {
         timer_handler();
+
+        //early return because timer will handle EOI
+        return;
     }
 
     if (int_num == 33)

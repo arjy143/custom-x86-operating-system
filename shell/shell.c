@@ -16,6 +16,9 @@
 static int32_t cursor_row = 0;
 static int32_t cursor_col = 0;
 
+extern volatile uint32_t thread_a_count;
+extern volatile uint32_t thread_b_count;
+
 static void newline()
 {
     cursor_col = 0;
@@ -295,6 +298,19 @@ static void cmd_pagefault()
     *bad_ptr = 0x12345678;
 }
 
+static void cmd_threadcount()
+{
+    char buffer[32];
+    
+    print("Thread A: ", OUTPUT_COLOUR);
+    itoa(thread_a_count, buffer);
+    println(buffer, OUTPUT_COLOUR);
+
+    print("Thread B: ", OUTPUT_COLOUR);
+    itoa(thread_b_count, buffer);
+    println(buffer, OUTPUT_COLOUR);
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
@@ -383,6 +399,10 @@ static void parse_and_run(char* input)
     else if (strcmp(cmd, "pagefault") == 0)
     {
         cmd_pagefault();
+    }
+    else if (strcmp(cmd, "threadcount") == 0)
+    {
+        cmd_threadcount();
     }
     else if (strcmp(cmd, "rawmem") == 0)
     {
